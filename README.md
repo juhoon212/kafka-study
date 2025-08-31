@@ -25,3 +25,11 @@
 |--create|--topic: 기술된 topic 명으로 topic 신규 생성 <br> --partitions: Topic의 파티션 수 <br> --replication-factor: replication 개수|
 |--list|브로커에 있는 Topic들의 리스트|
 |--describe|--topic: 기술된 topic명으로 상세 정보 표시|
+
+### 📚 명령어 요약
+- Topic 생성 : ```kafka-topics --bootstrap-server [host]:[port] --create --topic [topic name]```
+- Topic 생성(파티션 수 설정) : ```kafka-topics --bootstrap-server [host]:[port] --create --topic [topic name] --partitions [count]```
+- Topic 생성(replica-factor 포함) : ``` server [host]:[port] --create --topic [topic name] --partitions [count] --replication-factor [count]```
+- Topic 삭제 : ```kafka-topics --bootstrap-server [host]:[port] --delete --topic [topic name]```
+- Topic 상세 : ```kafka-topics --boostrap-server [host]:[port] --describe --topic [topic name]```
+- 브로커의 topic list 조회 : ```kafka-topics --boostrap-server [host]:[port] --list```
