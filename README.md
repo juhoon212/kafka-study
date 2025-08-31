@@ -16,3 +16,12 @@
 ### confluent vs apache-kafka
 - 자세한 더 알아봐야겠지만 일단 confluent kafka는 etc 밑에 해당 라이브러리의 파일이 있는 반면 apache-kafka는 config 디렉토리 밑에 파일이 있다.
 - 또한 confluent-kafka는 커뮤니티 버전은 제외하고 다른 버전에서 ksqldb를 지원한다.
+
+## ⛄️ Topic 생성 및 정보 확인
+
+|주요 인자|설명|
+|-------|-------|
+|--bootstrap-server|Topic을 생성할 Kafka Broker 서버 주소:Port <br>--bootstrap-server localhost:9092|
+|--create|--topic: 기술된 topic 명으로 topic 신규 생성 <br> --partitions: Topic의 파티션 수 <br> --replication-factor: replication 개수|
+|--list|브로커에 있는 Topic들의 리스트|
+|--describe|--topic: 기술된 topic명으로 상세 정보 표시|
