@@ -33,3 +33,15 @@
 - Topic 삭제 : ```kafka-topics --bootstrap-server [host]:[port] --delete --topic [topic name]```
 - Topic 상세 : ```kafka-topics --boostrap-server [host]:[port] --describe --topic [topic name]```
 - 브로커의 topic list 조회 : ```kafka-topics --boostrap-server [host]:[port] --list```
+
+## 🐶 Kafka Cli 에서 메세지 쓰고 읽기
+### Produce
+- ```kafka-console-producer --bootstrap-server [host]:[port] --topic [topic name]``` 을 치면 > 표시가 나오고 메세지를 produce 할 수 있다.
+- aaa, bbb, ccc 등 메세지를 produce 해보자
+- 참고로 Producer가 메세지를 broker에 넣는 과정에서는 send() -> Serializer(byte code로 변환) -> Partitioner(어떤 파티션으로 갈지 매핑) 하는 과정을 거친다.
+### Consume
+- ```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name]``` 을 치면 consume 할 수 있다.
+- 🚨 그런데 메세지를 consume하지 않는다. 왜 그러지?
+- 🫸 Kafka의 consumer는 auto.offset.reset 기능을 가지고 있다. 이것이 무엇이냐? >>> 바로 Consumer가 Topic에 처음 접근하여 메세지를 가져올때 가장 처음(오래된) 메세지부터 가져올 것인지 아니면 가장 최근의 메세지를 가져올 것인지 판단하는 기능이다.
+- Default는 lastest로 되어있어 먼저 produce한 메세지들은 가지고 오지 않는 것이다
+- 이럴때는 ```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name] --from-beginning``` 이렇게 치면 전의 메세지 즉 가장 오래된 메세지부터 가져올 수 있게된다.
