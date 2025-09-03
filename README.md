@@ -45,3 +45,12 @@
 - 🫸 Kafka의 consumer는 auto.offset.reset 기능을 가지고 있다. 이것이 무엇이냐? >>> 바로 Consumer가 Topic에 처음 접근하여 메세지를 가져올때 가장 처음(오래된) 메세지부터 가져올 것인지 아니면 가장 최근의 메세지를 가져올 것인지 판단하는 기능이다.
 - Default는 lastest로 되어있어 먼저 produce한 메세지들은 가지고 오지 않는 것이다
 - 이럴때는 ```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name] --from-beginning``` 이렇게 치면 전의 메세지 즉 가장 오래된 메세지부터 가져올 수 있게된다.
+
+## 🗝️ Key 값을 가지지 않는 메세지 전송
+- 메세지는 producer를 통해 전송 시 Partitioner를 통해서 어떤 파티션으로 갈지 라우팅 됨.
+- Key 값을 가지지 않는 경우: Round robin, sticky partition등의 파티션 전략등이 선택되어 파티션 별로 메세지 전송됨.
+- Topic이 복수 개의 파티션을 가질때 메세지 순서가 보장되지 않음.
+## 🔐 Key 값을 가지는 매세지 전송
+- 특정 Key 값을 가지는 메세지는 특정 파티션으로 고정되어 전송된다.
+### ‼️ 알아둘점!
+- 카프카는 하나의 파티션 내에서만 메세지 순서를 보장한다.
