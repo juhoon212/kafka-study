@@ -52,5 +52,8 @@
 - Topic이 복수 개의 파티션을 가질때 메세지 순서가 보장되지 않음.
 ## 🔐 Key 값을 가지는 매세지 전송
 - 특정 Key 값을 가지는 메세지는 특정 파티션으로 고정되어 전송된다.
-### ‼️ 알아둘점!
+### ‼️ 알아둘 점!
 - 카프카는 하나의 파티션 내에서만 메세지 순서를 보장한다.
+### Kafka cli로 키 값 있는 메세지 produce && consume
+- Produce : ```kafka-console-producer --bootstrap-server localhost:9092 --topic test-topic \ --property key.separator=: --property parse.key=true```
+- Consume : ```kafka-console-consumer --bootstrap-server localhost:9092 --topic test-topic \ --property print.key=true --property print.value=true --from-beginning```
