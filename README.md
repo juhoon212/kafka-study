@@ -57,3 +57,13 @@
 ### Kafka cli로 키 값 있는 메세지 produce && consume
 - Produce : ```kafka-console-producer --bootstrap-server localhost:9092 --topic test-topic \ --property key.separator=: --property parse.key=true```
 - Consume : ```kafka-console-consumer --bootstrap-server localhost:9092 --topic test-topic \ --property print.key=true --property print.value=true --from-beginning```
+## 여러개의 파티션을 가지는 메세지 전송
+### 🍇 Topic 생성
+```kafka-topics --bootstrap-server [host]:[port] --create --topic [topic name] --partitions [파티션 수]```
+### 👉 파티션별로 consume 하는 것을 보여주는 명령어
+```kafka-topics --bootstrap-server [host]:[port] --topic [topic name] \ --from-beginning --property print.partition=true```
+<img width="369" height="746" alt="스크린샷 2025-09-04 오후 11 17 34" src="https://github.com/user-attachments/assets/50eb31f1-c619-42c7-8a8f-9f5a7bf95bce" />
+
+### 🍎 키값을 가지는 메세지의 경우
+```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name] \ --property print.key=true --property print.value=true \ --property print.partition=true```
+- 해당 명령어 사용시 메세지가 어디쪽 파티션에서 소비되었는지 나온다.
