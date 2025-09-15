@@ -85,3 +85,8 @@
 - 모든 Consumer들은 고유한 그룹 아이디를 가지는 컨슈머 그룹에 소속됨.
 - 서로 다른 컨슈머 그룹들에 속한 컨슈머들은 다른 컨슈머 그룹이 구독한 파티션을 구독해도 된다. (단, 같은 컨슈머 그룹의 컨슈머는 동일한 파티션을 구독할 수 없다.)
 - kafka consumer group 생성 명령어 ```kafka-console-consumer --bootstrap-server [host]:[port] --group [group_id] --topic [topic name] --property print.key=true --property print.value=true --property print.partition=true```
+- consumer groups 조회
+  - ```kafka-consumer-groups --boostrap-server [host]:[port] --list```
+  - ```kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group [group name]``` -> 상세정보 조회
+- <img width="1221" height="204" alt="스크린샷 2025-09-15 오후 10 00 22" src="https://github.com/user-attachments/assets/c7bbe501-9d87-4d67-8160-7bf0e7bd08dd" />
+- 위의 사진의 LAG 란 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
