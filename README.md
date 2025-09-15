@@ -75,3 +75,13 @@
 ### 🍎 키값을 가지는 메세지의 경우
 ```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name] \ --property print.key=true --property print.value=true \ --property print.partition=true```
 - 해당 명령어 사용시 메세지가 어디쪽 파티션에서 소비되었는지 나온다.
+
+## 🛍️ Consumer 
+### Consumer Group과 Consumer
+- 모든 Consumer들은 단 하나의 Consumer Group에 소속되어야 하며, Consumer Group은 1개 이상의 Consumer를 가질 수 있다.
+- 파티션의 레코드들은 **단 하나의 Consumer에만** 할당
+- Consumer Group내에 Consumer 변화가 있을 시 마다 파티션과 Consumer의 조합을 변경하는 Rebalancing 발생
+- 보통은 파티션 하나마다 컨슈머 하나씩을 둔다.
+- 모든 Consumer들은 고유한 그룹 아이디를 가지는 컨슈머 그룹에 소속됨.
+- 서로 다른 컨슈머 그룹들에 속한 컨슈머들은 다른 컨슈머 그룹이 구독한 파티션을 구독해도 된다. (단, 같은 컨슈머 그룹의 컨슈머는 동일한 파티션을 구독할 수 없다.)
+-  
