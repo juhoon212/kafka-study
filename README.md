@@ -84,4 +84,4 @@
 - 보통은 파티션 하나마다 컨슈머 하나씩을 둔다.
 - 모든 Consumer들은 고유한 그룹 아이디를 가지는 컨슈머 그룹에 소속됨.
 - 서로 다른 컨슈머 그룹들에 속한 컨슈머들은 다른 컨슈머 그룹이 구독한 파티션을 구독해도 된다. (단, 같은 컨슈머 그룹의 컨슈머는 동일한 파티션을 구독할 수 없다.)
--  
+- kafka consumer group 생성 명령어 ```kafka-console-consumer --bootstrap-server [host]:[port] --group [group_id] --topic [topic name] --property print.key=true --property print.value=true --property print.partition=true```
