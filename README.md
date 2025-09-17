@@ -89,4 +89,4 @@
   - ```kafka-consumer-groups --boostrap-server [host]:[port] --list```
   - ```kafka-consumer-groups --bootstrap-server localhost:9092 --describe --group [group name]``` -> 상세정보 조회
 - <img width="1221" height="204" alt="스크린샷 2025-09-15 오후 10 00 22" src="https://github.com/user-attachments/assets/c7bbe501-9d87-4d67-8160-7bf0e7bd08dd" />
-- 위의 사진의 LAG 란 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
+- 위의 사진의 LAG 란 컨슈머 그룹이 소비하지 않은 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
