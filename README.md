@@ -92,3 +92,11 @@
 - 위의 사진의 LAG 란 컨슈머 그룹이 소비하지 않은 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
 ### Consumer 그룹 삭제
 - ```kafka-consumer-groups --bootstrap-server [host]:[port] --delete --group [group_name]``` - 단! consumer가 모두 내려져 있는 상태에서 그룹을 삭제할 수 있다.
+## 📘 Kafka Config
+### Broker와 Topic 레벨 Config
+- Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
+- topic config는 broker config의 설정을 override 시킬 수 있다.
+### Config 사용하기
+- Config 값 확인: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --all --describe```
+- Config 값 설정: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --alter --add-config property명=value```
+- Config 값 unset: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --alter --delete-config property명```
