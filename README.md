@@ -100,3 +100,7 @@
 - Config 값 확인: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --all --describe```
 - Config 값 설정: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --alter --add-config property명=value```
 - Config 값 unset: ```kafka-configs --bootstrap-server [host]:[port] --entity-type [brokers/topics] --entity-name [broker id/topic name] --alter --delete-config property명```
+## 🗂️ Kafka log 확인
+### kafka-dump-log
+- 명령어 : ```kafka-dump-log --deep-iteration --files [log 파일 위치] --print-data-log```
+- 여기서 log 파일 위치는 카프카 설정에서 생성한 로그 파일 위치의 찾고 싶은 토픽 name 경로로 들어가면 ~.log 로 찾을 수 있다.
