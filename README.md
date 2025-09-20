@@ -1,4 +1,4 @@
-# 📖 kafka-study
+# 📖 CLI 실습
 ## 🔍 환경
 - UTM에 Ubuntu 22.04 마운트 
 - confluent-kafka 7.8.1 tar download
