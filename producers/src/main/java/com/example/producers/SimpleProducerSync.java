@@ -3,11 +3,17 @@ package com.example.producers;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-public class SimpleProducer {
+public class SimpleProducerSync {
+    public static final Logger logger = LoggerFactory.getLogger(SimpleProducerSync.class.getName());
     public static void main(String[] args) {
         String topic = "simple-topic";
         // KafkaProducer configuration setting
@@ -24,9 +30,15 @@ public class SimpleProducer {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, "id-001", "hello-world");
 
         // KafkaProducer send data to Kafka topic
-        producer.send(record);
-        producer.flush();
-        producer.close();
-
+        Future<RecordMetadata> future = producer.send(record);
+        try {
+            // sync code - .get() blocks the .send() method until a response is received
+            final RecordMetadata recordMetadata = future.get();
+            logger.info("\n ##### record metadata received #### \n partition: {}\noffset: {}\ntimestamp: {}", recordMetadata.partition(), recordMetadata.offset(), recordMetadata.timestamp());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } finally {
+            producer.close();
+        }
     }
 }
