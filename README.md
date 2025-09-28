@@ -76,6 +76,24 @@
 ```kafka-console-consumer --bootstrap-server [host]:[port] --topic [topic name] \ --property print.key=true --property print.value=true \ --property print.partition=true```
 - 해당 명령어 사용시 메세지가 어디쪽 파티션에서 소비되었는지 나온다.
 
+## 🏭 Producer
+### acks설정에 따른 send 방식
+- 해당 Topic의 파티션의 리더 브로커에게만 메세지를 보냄
+### acks 0
+- 리더 브로커가 메세지 A를 정상적으로 받았는지에 대한 ack 메세지를 받지 않고 다음 메세지인 메세지 B를 바로 전송
+- 메세지가 제대로 전송되었는지 브로커로 부터 확인을 받지 않기 떄문에 메세지가 브로커에 기록되지 않더라도 재 전송하지 않음
+- 메세지 손실의 우려가 가장 크지만 가장 빠르게 전송할 수 있음
+### acks 1
+- 리더 브로커가 메세지 A를 정상적으로 받았다는 ack 메세지를 받은 후에 다음 메세지인 메세지 B를 전송
+  - 만약 오류 메세지를 브로커로 부터 받으면 메세지 A를 재전송
+- 메세지 A가 모든 replication에 완벽하게 복사되었는지 여부는 확인하지 않고 B를 전송
+- 만약 리더가 메세지를 복제 중에 다운될 경우 다음 리더가 될 브로커에는 메세지가 없을 수 있기 때문에 소실할 우려가 있음
+### acks all, -1(default)
+- 리더 브로커가 메세지 A를 정상적으로 받은 뒤 min.insync.replicas 개수 만큼의 replication에 복제를 수행한 뒤에 보내는 Ack 메세지를 받은 후 다음 메세지인 메세지 B를 바로 전송.
+  - 만약 오류 메세지를 브로커로 부터 받으면 메세지 A를 재전송
+- 메세지 A가 모든 replicator에 완벽하게 복사되었는지의 여부까지 확인후에 메세지 B를 전송
+- 메세지 손실이 되지 않도록 모든 장애 상황을 감안한 전송 모드이지만 ack를 상대적으로 오래 기다려야 하므로 전송속도가 느림
+
 ## 🛍️ Consumer 
 ### Consumer Group과 Consumer
 - 모든 Consumer들은 단 하나의 Consumer Group에 소속되어야 하며, Consumer Group은 1개 이상의 Consumer를 가질 수 있다.
