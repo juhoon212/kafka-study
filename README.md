@@ -93,6 +93,21 @@
   - 만약 오류 메세지를 브로커로 부터 받으면 메세지 A를 재전송
 - 메세지 A가 모든 replicator에 완벽하게 복사되었는지의 여부까지 확인후에 메세지 B를 전송
 - 메세지 손실이 되지 않도록 모든 장애 상황을 감안한 전송 모드이지만 ack를 상대적으로 오래 기다려야 하므로 전송속도가 느림
+### 메세지 배치 전송의 이해
+- send() -> Serializer(byte code로 변환) -> Partitioner(어떤 파티션으로 갈지 매핑) -> RecordAccumulator(메세지 배치) -> Sender(배치 전송)
+- sender 스레드는 별도의 스레드로 sender 스레드가 브로커에게 메세지를 전송하기전에 recordAccumulator에서 메세지를 배치 단위로 읽어서 보낸다.
+- kafka producer 객체의 send() 메소드는 호출 시마다 하나의 producerRecord를 입력하지만 바로 전송되지 않고 내부 메모리(recordAccumulator)에서
+단일 메세지를 토픽 파티션에 따라 recordBatch 단위로 묶은 뒤 전송됨.
+- 메세지들은 producer client의 내부 매모리에 여러개의 batch들로 buffer.memory 설정 사이즈 만큼 보관될 수 있으며 여러 개의 batch들로 한꺼번에 전송될 수 있음.
+### record accumulator
+- recordAccumulator는 파티셔너에 의해서 메세지 배치가 전송이 될 토픽과 파티션에 따라 저장되는 kafka producer 메모리 영역
+- sender 스레드는 recordAccumulator에 누적된 메세지 배치를 꺼내서 브로커로 전송함
+- kafka producer의 main thread는 send() 메소드를 호출하고 record accumulator에 데이터 저장하고 sender 스레드는 별개로 데이터를 브로커로 전송
+### 옵션
+- linger.ms : sender thread로 메세지를 보내기 전 배치로 메세지를 만들어서 보내기 위한 최대 대기 시간
+- buffer.memory : record accumulator의 전체 메모리 사이즈
+- batch.size : 배치 하나의 최대 크기
+
 
 ## 🛍️ Consumer 
 ### Consumer Group과 Consumer

@@ -76,7 +76,7 @@ public class PizzaProducer {
         } else {
             try {
                 RecordMetadata recordMetadata = producer.send(record).get();
-                logger.info("async message ; {}, partition: {}, offset: {} ",
+                logger.info("sync message ; {}, partition: {}, offset: {} ",
                         pMessage.get("key"), recordMetadata.partition(), recordMetadata.offset());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -94,6 +94,7 @@ public class PizzaProducer {
         props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.219.212:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // 0으로 해놓으면 브로커로 부터 acks 를 기다리지 않기 때문에 offset 정보를 받을 수 없음
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
