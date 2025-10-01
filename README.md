@@ -117,6 +117,22 @@
 - buffer.memory : record accumulator의 전체 메모리 사이즈
 - batch.size : 배치 하나의 최대 크기
 - max.inflight.requests.per.connection: connection 당 최대 가져갈 수 있는 batch 개수
+- delivery.timeout.ms : 메세지 전송 제한 시간(retry 포함)
+  - ❗️ producer record가 record accumulator 에 저장되지 못하는 경우
+    - record accumulator에 메세지를 저장할 수 있는 공간이 부족한 경우
+    - max.block.ms 시간동안 record accumulator에 메세지를 저장할 수 없으면 send() 메소드는 예외를 발생시킴
+- request.timeout.ms : 브로커로 부터 응답을 기다리는 최대 시간
+  - 브로커로 부터 응답이 없으면 재전송
+  - delivery.timeout.ms 보다 작게 설정해야함.
+- retry.backoff.ms : 재전송 주기 시간
+- ‼️ 필수! -> delivery.timeout.ms >= linger.ms + request.timeout.ms
+- retries : 재전송 시도 횟수
+  - 굉장히 크게 설정
+  - 어차피 delivery.timeout.ms 시간 내에 재전송 시도가 끝나지 않으면 예외 발생
+  - 보통 retries는 무한대값으로 설정, delivery.timeout.ms(120000 default, 2분)를 조정하는 것을 권장
+- 📖 ex) retries = 10, request.timeout.ms=10000ms, retry.backoff.ms=30ms 라고 하면 request.timeout.ms 기다린 후 재 전송하기 전 30ms를 더 기다린 후
+  재전송 시도, 이와 같은 방식으로 10회 시도하고 더 이상 retry 시도 x
+  - 만약 10회 내에 delivery.timeout.ms 시간이 지나면 예외 발생하고 더 이상 retry를 진행하지 않음.
 
 
 ## 🛍️ Consumer 
