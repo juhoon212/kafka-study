@@ -104,9 +104,19 @@
 - sender 스레드는 recordAccumulator에 누적된 메세지 배치를 꺼내서 브로커로 전송함
 - kafka producer의 main thread는 send() 메소드를 호출하고 record accumulator에 데이터 저장하고 sender 스레드는 별개로 데이터를 브로커로 전송
 ### 옵션
-- linger.ms : sender thread로 메세지를 보내기 전 배치로 메세지를 만들어서 보내기 위한 최대 대기 시간
+- linger.ms : sender thread로 메세지를 보내기 전 배치로 메세지를 만들어서 보내기 위한 최대 대기 시간 
+(쉽게 말하면 sender 스레드가 배치를 가져가기 전 이만큼만 기다려~ 하는것)
+  - sender 스레드는 기본적으로 전송할 준비가 되어 있으면 record accumulator 에서 1개의 배치를 가져갈 수도, 여러개의 배치를 가져갈 수도 있음
+  - batch에 메세지가 다 차지 않아도 가져갈 수 있음.
+  - linger.ms를 0보다 크게 설정하여 sender 스레드가 하나의 record batch를 가져갈 때 일정 시간 대기하여 record batch에 메세지를 보다 많이 채울 수 있도록 적용
+  - ❓ linger.ms에 대한 고찰
+    - linger.ms를 반드시 0 보다 크게 설정할 필요는 없음
+    - producer와 broker 간의 전송이 매우 빠르고 producer에서 메세지를 적절한 record accumulator에 누적된다면 0이 되어도 무방함.
+    - 전반적인 producer와 broker 간의 네트워크 속도가 느리거나 producer에서 메세지를 보내는 속도가 느린 경우에는 0보다 크게 설정하는 것이 좋음.
+    - 보통 20ms 이하로 설정 권장
 - buffer.memory : record accumulator의 전체 메모리 사이즈
 - batch.size : 배치 하나의 최대 크기
+- max.inflight.requests.per.connection: connection 당 최대 가져갈 수 있는 batch 개수
 
 
 ## 🛍️ Consumer 
