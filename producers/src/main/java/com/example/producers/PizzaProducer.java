@@ -95,6 +95,9 @@ public class PizzaProducer {
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // 0으로 해놓으면 브로커로 부터 acks 를 기다리지 않기 때문에 offset 정보를 받을 수 없음
+        //batch settings
+        //props.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "32000");
+        //props.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
