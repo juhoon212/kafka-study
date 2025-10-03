@@ -49,6 +49,8 @@
 ## 🗝️ Key 값을 가지지 않는 메세지 전송
 - 메세지는 producer를 통해 전송 시 Partitioner를 통해서 어떤 파티션으로 갈지 라우팅 됨.
 - Key 값을 가지지 않는 경우: Round robin, sticky partition등의 파티션 전략등이 선택되어 파티션 별로 메세지 전송됨.
+  - Round robin : 메세지 배치를 순차적으로 다른 파티션으로 전송함 - 구버전
+  - sticky partition 이란? 특정 파티션으로 전송되는 하나의 배치에 메세지를 빠르게 먼저 채워서 보내는 방식
 - Topic이 복수 개의 파티션을 가질때 메세지 순서가 보장되지 않음.
 ### 분배 전략
 - RR(round robin) : kafka 2.4버전 이전 기본 파티션 분배 전략 - 메세지 배치를 순차적으로 **다른** 파티션으로 전송함 ex) batch size가 다 차면 전송 설정(batch.size)

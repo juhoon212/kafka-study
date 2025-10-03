@@ -14,8 +14,8 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-public class PizzaProducer {
-    public static final Logger logger = LoggerFactory.getLogger(PizzaProducer.class.getName());
+public class PizzaProducerCustomPartitioner {
+    public static final Logger logger = LoggerFactory.getLogger(PizzaProducerCustomPartitioner.class.getName());
 
     public static void sendPizzaMessage(
             final KafkaProducer<String, String> kafkaProducer,
@@ -86,7 +86,7 @@ public class PizzaProducer {
 
 
     public static void main(String[] args) {
-        String topic = "pizza-topic";
+        String topic = "pizza-topic-partitioner";
         // KafkaProducer configuration setting
         Properties props = new Properties();
         // boostrap.servers, key.serializer.class, value.serializer.class
@@ -94,18 +94,13 @@ public class PizzaProducer {
         props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // 0으로 해놓으면 브로커로 부터 acks 를 기다리지 않기 때문에 offset 정보를 받을 수 없음
-        //batch settings
-        //props.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "32000");
-        //props.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
-        //props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "29000"); -> delivery-timeout >= linger.ms(default: 0) + request-timeout.ms(default: 30000)
-        //props.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "6");
-        //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // idempotence 를 위해서는 acks=all 이어야 함
-        props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+        //props.setProperty("partitioner.class", "CustomPartitioner");
+        props.setProperty("custom.specialKey", "P001");
+        props.setProperty(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com.example.producers.partitioner.CustomPartitioner");
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        sendPizzaMessage(producer, topic, -1, 10, 100, 100, true);
+        sendPizzaMessage(producer, topic, -1, 10, 100, 100, true); // sync true는 메세지 편하게 보려고
         producer.close();
     }
 }
