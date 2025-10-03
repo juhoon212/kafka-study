@@ -123,7 +123,7 @@
     - 가령 메세지 A, B 가 있다고 가정 (A가 B보다 먼저 생성된 메세지 배치)
     - max.in.flight.requests.per.connection = 2(> 1) 에서 A, B 2개의 배치 메세지를 전송 시 B는 성공적으로
     기록 되었으나 A의 경우 write 되지 않고 ack 전송이 되지 않는 fail 상황인 경우 producer는 A를 재 전송하여 성공적으로
-    기록되며 producer의 원래 메세지 순서와는 다르게 broker에 저장될 수 있음.
+    기록되며 producer의 원래 메세지 순서와는 다르게 broker에 저장될 수 있음.(같은 파티션인 경우)
     - 이러한 상황을 해결하기 위해서 enable.idempotence=true 설정을 통해서 producer의 메세지 전송 순서와 broker의 메세지 저장 순서를 동일하게 보장할 수 있음.
 - delivery.timeout.ms : 메세지 전송 제한 시간(retry 포함)
   - ❗️ producer record가 record accumulator 에 저장되지 못하는 경우
@@ -141,6 +141,23 @@
 - 📖 ex) retries = 10, request.timeout.ms=10000ms, retry.backoff.ms=30ms 라고 하면 request.timeout.ms 기다린 후 재 전송하기 전 30ms를 더 기다린 후
   재전송 시도, 이와 같은 방식으로 10회 시도하고 더 이상 retry 시도 x
   - 만약 10회 내에 delivery.timeout.ms 시간이 지나면 예외 발생하고 더 이상 retry를 진행하지 않음.
+- enable.idempotence=true
+  - producer는 브로커로 부터 ack를 받은 다음에 다음 메세지를 전송하되, producer id와 메세지 seq를 header에 저장하여 전송
+  - 메세지 seq는 메세지의 고유 seq 번호. 0부터 시작하여 순차적으로 증가
+  - 브로커에서 메세지 seq가 중복될 경우 이를 메세지 로그에 기록하지 않고 ack만 전송
+  - 브로커는 producer가 보낸 메세지의 seq가 브로커가 가지고 있는 메세지의 seq보다 1만큼 큰 경우에만 브로커에 저장
+  - producer 설정
+    - enable.idempotence=true
+    - acks=all
+    - retries>0
+    - max.inflight.requests.per.connection=5(기본값) between 1
+      - 단, 1로 설정시 병렬 전송이 불가능하여 전체적인 전송 성능이 떨어짐.
+  - 메세지 전송 순서 유지
+    - 배치 B0, B1, B2 가 함께 전송됬다고 가정(max.inflight.requests.per.connection=3)
+    - 브로커는 메세지 배치를 처리 시 write된 배치의 마지막 메세지 seq+1 이 아닌 배치 메세지가 올 경우
+    OutOfOrderException을 생성하여 producer에게 전송
+      - ex) B0 -> seq 0~10 B1 -> seq 11~20 B2 -> seq 21~30 인데 브로커에 도착한 seq이 11이 아닌 21이 온 경우
+      OutOfOrderException 발생
 ### 전송 전략
 - 최대 한번 전송(at most once) : 메세지를 한번만 전송, 전송 실패시 재전송하지 않음
   - acks=0, retries=0
