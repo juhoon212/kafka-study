@@ -141,6 +141,14 @@
 - 📖 ex) retries = 10, request.timeout.ms=10000ms, retry.backoff.ms=30ms 라고 하면 request.timeout.ms 기다린 후 재 전송하기 전 30ms를 더 기다린 후
   재전송 시도, 이와 같은 방식으로 10회 시도하고 더 이상 retry 시도 x
   - 만약 10회 내에 delivery.timeout.ms 시간이 지나면 예외 발생하고 더 이상 retry를 진행하지 않음.
+### 전송 전략
+- 최대 한번 전송(at most once) : 메세지를 한번만 전송, 전송 실패시 재전송하지 않음
+  - acks=0, retries=0
+- 적어도 한번 전송(at least once) : 메세지를 한번 이상 전송, 전송 실패시 재전송
+  - acks=1 or all, retries>0
+- 정확히 한번 전송(exactly once) : 메세지를 정확히 한번 전송, 중복 전송되지 않음
+  - acks=all, retries>0, enable.idempotence=true
+  - transaction 기반 전송: consumer -> process -> producer(주로 kafka stream api 사용)
 
 
 ## 🛍️ Consumer 
