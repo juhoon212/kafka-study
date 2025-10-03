@@ -91,13 +91,14 @@ public class PizzaProducer {
         Properties props = new Properties();
         // boostrap.servers, key.serializer.class, value.serializer.class
         //props.setProperty("bootstrap.servers", "192.168.64.22:9092");
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.219.212:9092");
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // 0으로 해놓으면 브로커로 부터 acks 를 기다리지 않기 때문에 offset 정보를 받을 수 없음
         //batch settings
         //props.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, "32000");
         //props.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
+        //props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "29000"); -> delivery-timeout >= linger.ms(default: 0) + request-timeout.ms(default: 30000)
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
