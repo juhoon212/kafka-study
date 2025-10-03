@@ -86,7 +86,7 @@ public class PizzaProducerCustomPartitioner {
 
 
     public static void main(String[] args) {
-        String topic = "pizza-topic";
+        String topic = "pizza-topic-partitioner";
         // KafkaProducer configuration setting
         Properties props = new Properties();
         // boostrap.servers, key.serializer.class, value.serializer.class
@@ -94,11 +94,13 @@ public class PizzaProducerCustomPartitioner {
         props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.setProperty("partition.class", "CustomPartitioner");
+        //props.setProperty("partitioner.class", "CustomPartitioner");
+        props.setProperty("custom.specialKey", "P001");
+        props.setProperty(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com.example.producers.partitioner.CustomPartitioner");
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        sendPizzaMessage(producer, topic, -1, 10, 100, 100, true);
+        sendPizzaMessage(producer, topic, -1, 10, 100, 100, true); // sync true는 메세지 편하게 보려고
         producer.close();
     }
 }
