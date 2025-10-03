@@ -117,6 +117,14 @@
 - buffer.memory : record accumulator의 전체 메모리 사이즈
 - batch.size : 배치 하나의 최대 크기
 - max.inflight.requests.per.connection: connection 당 최대 가져갈 수 있는 batch 개수
+  - 브로커 서버의 응답없이 producer의 sender 스레드가 한번에 보낼 수 있는 메세지 배치의 개수
+  - 기본값 5
+  - ❗️producer 메세지 전송 순서와 broker 메세지 저장 순서 고찰
+    - 가령 메세지 A, B 가 있다고 가정 (A가 B보다 먼저 생성된 메세지 배치)
+    - max.in.flight.requests.per.connection = 2(> 1) 에서 A, B 2개의 배치 메세지를 전송 시 B는 성공적으로
+    기록 되었으나 A의 경우 write 되지 않고 ack 전송이 되지 않는 fail 상황인 경우 producer는 A를 재 전송하여 성공적으로
+    기록되며 producer의 원래 메세지 순서와는 다르게 broker에 저장될 수 있음.
+    - 이러한 상황을 해결하기 위해서 enable.idempotence=true 설정을 통해서 producer의 메세지 전송 순서와 broker의 메세지 저장 순서를 동일하게 보장할 수 있음.
 - delivery.timeout.ms : 메세지 전송 제한 시간(retry 포함)
   - ❗️ producer record가 record accumulator 에 저장되지 못하는 경우
     - record accumulator에 메세지를 저장할 수 있는 공간이 부족한 경우
