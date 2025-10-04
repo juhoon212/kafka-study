@@ -1,14 +1,16 @@
 package com.example.consumers;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
 public class SimpleConsumer {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleConsumer.class);
     public static void main(String[] args) {
         String topic = "simple-topic";
 
@@ -20,6 +22,14 @@ public class SimpleConsumer {
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(topic));
-    }
 
+        try (consumer) {
+            while (true) {
+                final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));// 1초
+                for (ConsumerRecord<String, String> record : consumerRecords) {
+                    logger.info("record key: {}, record value: {}, partition: {}", record.key(), record.value(), record.partition());
+                }
+            }
+        }
+    }
 }
