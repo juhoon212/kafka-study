@@ -186,6 +186,13 @@
 - 위의 사진의 LAG 란 컨슈머 그룹이 소비하지 않은 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
 ### Consumer 그룹 삭제
 - ```kafka-consumer-groups --bootstrap-server [host]:[port] --delete --group [group_name]``` - 단! consumer가 모두 내려져 있는 상태에서 그룹을 삭제할 수 있다.
+### 🍎 Consumer 개요
+- Consumer는 poll() 메소드를 이용하여 주기적으로 브로커의 토픽 파티션에서 메세지를 가져옴. 
+  - 메세지를 성공적으로 가져왔으면 commit을 통해서 __consumer_offset에 다음에 읽을 offset 위치를 기재함.
+- KafkaConsumer는 fetcher, ConsumerClientNetwork 등의 주요 내부 객체와 별도의 heart beat thread를 생성
+- Fetch, ConsumerClientNetwork 객체는 broker의 토픽 파티션에서 메세지를 fetch 및 poll 수행
+- Heart beat thread는 consumer의 정상적인 활동을 group coordinator(브로커)에 보고하는 역할을 수행(group coordinator는 주어진 시간동안 heart beat을 받지 못하면 consumer 들의 rebalance를 명령)
+- 
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
