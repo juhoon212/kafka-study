@@ -186,6 +186,43 @@
 - 위의 사진의 LAG 란 컨슈머 그룹이 소비하지 않은 토픽의 파티션에 쌓인 메세지의 갯수를 뜻한다.
 ### Consumer 그룹 삭제
 - ```kafka-consumer-groups --bootstrap-server [host]:[port] --delete --group [group_name]``` - 단! consumer가 모두 내려져 있는 상태에서 그룹을 삭제할 수 있다.
+### 🍎 Consumer 개요
+- Consumer는 poll() 메소드를 이용하여 주기적으로 브로커의 토픽 파티션에서 메세지를 가져옴. 
+  - 메세지를 성공적으로 가져왔으면 commit을 통해서 __consumer_offset에 다음에 읽을 offset 위치를 기재함.
+- KafkaConsumer는 fetcher, ConsumerClientNetwork 등의 주요 내부 객체와 별도의 heart beat thread를 생성
+- Fetch, ConsumerClientNetwork 객체는 broker의 토픽 파티션에서 메세지를 fetch 및 poll 수행
+- Heart beat thread는 consumer의 정상적인 활동을 group coordinator(브로커)에 보고하는 역할을 수행(group coordinator는 주어진 시간동안 heart beat을 받지 못하면 consumer 들의 rebalance를 명령)
+### KafkaConsumer의 주요 구성 요소와 poll() 메소드
+- ```ConsumerRecords<K,V> consumerRecords = consumer.poll(Duration.ofMillis(1000));```
+- 브로커나 Consumer 내부 Queue에 데이터가 있다면 바로 데이터를 반환
+- 그렇지 않을 경우에는 1000ms 동안 데이터 fetch를 브로커에 계속 수행하고 결과 반환
+- Fetcher : 브로커로 부터 메세지를 fetch하는 역할
+  - LinkedQueue에 데이터가 있을 경우 Fetcher는 데이터를 가져오고 반환하며 poll() 수행 완료
+  - LinkedQueue에 데이터가 없을 경우 fetcher는 브로커에 fetch 요청을 보냄 - ConsumerClientNetwork 객체를 통해서
+- ConsumerClientNetwork : 브로커와 네트워크 통신을 담당하는 역할
+  - ConsumerClientNetwork는 비동기로 계속 브로커의 메세지를 가져와서 LinkedQueue에 저장
+### 옵션
+- fetch.min.bytes: Fetcher가 record들을 읽어들이는 최소 bytes 크기, 브로커는 지정된 옵션 이상의 새로운 메세지가 쌓일때까지 전송을 하지 않음. 기본 1byte
+- fetch.max.wait.ms: 브로커에 fetch.min.bytes 이상의 메세지가 쌓일 때까지 최대 대기 시간, 기본 500ms
+- fetch.max.bytes: Fetcher가 한번에 가져올 수 있는 최대 데이터 bytes, 기본은 50MB
+- max.partition.fetch.bytes: Fetcher가 한번에 가져올 수 있는 파티션 별 최대 데이터 bytes, 기본 1MB
+- max.poll.records: Fetcher가 한번에 가져올 수 있는 최대 레코드 수, 기본 500
+#### Consumer Fetcher 관련 주요 설정 파라미터 이해
+- options
+  - fetch.min.bytes=16384 (16KB) 
+  - fetch.max.wait.ms=500
+  - fetch.max.bytes=52428800 (50MB)
+  - max.partition.fetch.bytes=1024168 (1MB)
+  - max.poll.records=500(개)
+- KafkaConsumer.poll(1000) 으로 수행 시
+  - 가져올 데이터가 1건도 없으면 poll() 인자 시간만큼 대기 후 return
+  - 가져와야 할 데이터가 많을 경우 max.partition.fetch.bytes로 배치 크기 설정. 그렇지 않을 경우 fetch.min.bytes로 배치 크기 설정
+  - 가장 최신의 offset 데이터를 가져오고 있다면 fetch.min.bytes만큼 가져오고 return하고 fetch.min.bytes 만큼 쌓이지 않는다면 fetch.max.wait.ms 만큼 대기 후 return
+  - 오랜 과거 offset 데이터를 가져온다면 최대 max.partition.fetch.bytes 만큼 가져오고 return
+  - max.partition.fetch.bytes에 도달하지 못하여도 가장 최신의 offset에 도달하면 반환
+  - 토픽에 파티션이 많아도 가져오는 데이터량은 fetch.max.bytes로 제한
+  - Fetcher가 LinkedQueue에서 가져오는 레코드의 개수는 max.poll.records로 제한
+- 결론: 기본적으로 batch size는 fetch.min.bytes로 설정되며, 가져올 데이터가 많을 경우 혹은  오랜과거 offset 데이터를 가져온다면 max.partition.fetch.bytes로 배치 크기가 설정됨.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
