@@ -223,6 +223,15 @@
   - 토픽에 파티션이 많아도 가져오는 데이터량은 fetch.max.bytes로 제한
   - Fetcher가 LinkedQueue에서 가져오는 레코드의 개수는 max.poll.records로 제한
 - 결론: 기본적으로 batch size는 fetch.min.bytes로 설정되며, 가져올 데이터가 많을 경우 혹은  오랜과거 offset 데이터를 가져온다면 max.partition.fetch.bytes로 배치 크기가 설정됨.
+### __consumer_offsets 토픽 읽기
+- consumer가 읽어드린 offset 위치를 저장하는 내부 토픽
+- 1. consumer.config용 config 파일을 생성
+   - ```echo "exclude.internal.topics=false" > consumer_temp.config``` 
+- 2. __consumer_offsets 토픽을 읽기
+   - ```kafka-console-consumer --consumer.config /home/master/consumer_temp.config --boostrap-server [host]:[port] --topic __consumer_offsets --formatter "kafka.coordinator.group.GroupMetadataManager\$OffsetsMessageFormatter"``` 
+- 동일 consumer group으로 consumer가 새롭게 접속할 시 __consumer_offsets에 있는 offset 정보를 기반으로 메세지를 가져오기 때문에 earliest로 설정하여도 0번 오프셋부터 읽어 들이지 않음
+- Consumer group의 consumer가 모두 종료되어도 consumer group이 읽어들인 offset 정보는 7일동안 __consumer_offsets에 저장되어 있음(offsets.retention.minutes)
+- 해당 topic이 삭제되고 재 생성될 경우에는 해당 topic에 대한 consumer group의 offset 정보는 0으로 기록됨.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
