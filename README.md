@@ -223,6 +223,9 @@
   - 토픽에 파티션이 많아도 가져오는 데이터량은 fetch.max.bytes로 제한
   - Fetcher가 LinkedQueue에서 가져오는 레코드의 개수는 max.poll.records로 제한
 - 결론: 기본적으로 batch size는 fetch.min.bytes로 설정되며, 가져올 데이터가 많을 경우 혹은  오랜과거 offset 데이터를 가져온다면 max.partition.fetch.bytes로 배치 크기가 설정됨.
+  - fetch.min.bytes를 16KB로 설정하면 throughput이 향상 트래픽이 높으면 fetch.min.bytes를 크게 설정하는 것이 좋음.
+  - 주의! fetch.min.bytes를 너무 크게 설정하면 메세지 지연이 발생할 수 있음.
+  - 8~64KB 사이로 설정 권장
 ### __consumer_offsets 토픽 읽기
 - consumer가 읽어드린 offset 위치를 저장하는 내부 토픽
 - 1. consumer.config용 config 파일을 생성
