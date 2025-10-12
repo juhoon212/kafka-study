@@ -29,6 +29,7 @@ public class ConsumerWakeUp {
         // main thread
         Thread mainThread = Thread.currentThread();
         // main thread 종료 시 별도의 thread로 kafkaConsumer wakeup() 메소드를 호출하게 함
+        // graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Detected a shutdown, let's exit by calling consumer.wakeup()...");
             consumer.wakeup(); // poll() 메서드를 즉시 종료시키는 역할
