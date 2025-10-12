@@ -235,6 +235,7 @@
 - 동일 consumer group으로 consumer가 새롭게 접속할 시 __consumer_offsets에 있는 offset 정보를 기반으로 메세지를 가져오기 때문에 earliest로 설정하여도 0번 오프셋부터 읽어 들이지 않음
 - Consumer group의 consumer가 모두 종료되어도 consumer group이 읽어들인 offset 정보는 7일동안 __consumer_offsets에 저장되어 있음(offsets.retention.minutes)
 - 해당 topic이 삭제되고 재 생성될 경우에는 해당 topic에 대한 consumer group의 offset 정보는 0으로 기록됨.
+  - 따라서 topic에 쌓여있는 메세지를 처음부터 읽어 들이려면 topic을 삭제하고 재 생성해야함.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
