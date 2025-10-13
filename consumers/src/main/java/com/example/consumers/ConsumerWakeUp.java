@@ -13,10 +13,10 @@ import java.util.Properties;
 public class ConsumerWakeUp {
     private static final Logger logger = LoggerFactory.getLogger(ConsumerWakeUp.class);
     public static void main(String[] args) {
-        String topic = "simple-topic";
+        String topic = "pizza-topic";
 
         Properties props = new Properties();
-        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
+        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.25:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");

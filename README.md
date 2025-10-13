@@ -226,6 +226,12 @@
   - fetch.min.bytes를 16KB로 설정하면 throughput이 향상 트래픽이 높으면 fetch.min.bytes를 크게 설정하는 것이 좋음.
   - 주의! fetch.min.bytes를 너무 크게 설정하면 메세지 지연이 발생할 수 있음.
   - 8~64KB 사이로 설정 권장
+### 여러개의 파티션에 한개의 컨슈머 그룹 즉 여러 컨슈머가 속해 있을 경우
+- 파티션이 3개 있다고 가정
+- 컨슈머 그룹에서 컨슈머 1개 -> 3개로 늘어갈 경우
+  - 리밸런싱을 통해 join group -> sync group -> assignment -> heartbeat -> poll() 메소드 수행
+  - 파티션 3개를 컨슈머 3개가 나누어 가짐.
+  - 컨슈머 1개가 죽을 경우 -> 리밸런싱 -> 파티션 3개를 컨슈머 2개가 나누어 가짐.
 ### __consumer_offsets 토픽 읽기
 - consumer가 읽어드린 offset 위치를 저장하는 내부 토픽
 - 1. consumer.config용 config 파일을 생성

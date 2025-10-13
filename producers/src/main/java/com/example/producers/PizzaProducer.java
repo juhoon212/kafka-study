@@ -91,7 +91,7 @@ public class PizzaProducer {
         Properties props = new Properties();
         // boostrap.servers, key.serializer.class, value.serializer.class
         //props.setProperty("bootstrap.servers", "192.168.64.22:9092");
-        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
+        props.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.25:9092");
         props.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // 0으로 해놓으면 브로커로 부터 acks 를 기다리지 않기 때문에 offset 정보를 받을 수 없음
@@ -105,7 +105,7 @@ public class PizzaProducer {
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        sendPizzaMessage(producer, topic, -1, 10, 100, 100, true);
+        sendPizzaMessage(producer, topic, -1, 500, 0, 0, true);
         producer.close();
     }
 }
