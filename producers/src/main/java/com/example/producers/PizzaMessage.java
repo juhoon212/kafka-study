@@ -1,6 +1,7 @@
 package com.example.producers;
 
 import net.datafaker.Faker;
+import net.datafaker.providers.base.Bool;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
