@@ -242,6 +242,19 @@
 - Consumer group의 consumer가 모두 종료되어도 consumer group이 읽어들인 offset 정보는 7일동안 __consumer_offsets에 저장되어 있음(offsets.retention.minutes)
 - 해당 topic이 삭제되고 재 생성될 경우에는 해당 topic에 대한 consumer group의 offset 정보는 0으로 기록됨.
   - 따라서 topic에 쌓여있는 메세지를 처음부터 읽어 들이려면 topic을 삭제하고 재 생성해야함.
+### consumer rebalancing
+- consumer group내에 새로운 consumer가 추가되거나 기존 consumer가 종료 될때, 또는 topic에 새로운 파티션이 추가될 때 broker의 group coordinator는 consumer group내의 consumer들에게 파티션을 재할당하는 rebalancing을 수행하도록 지시
+  1. consumer group내의 consumer가 브로커에 최초 접속 요청 시 group coordinator 생성
+  2. 동일 group_id로 여러 개의 consumer로 broker의 group coordinator로 접속
+  3. 가장 빨리 그룹에 join 요청을 한 consumer에게 consumer group 내의 leader consumer로 지정
+  4. leader로 지정된 consumer는 파티션 할당 전략에 따라 consumer들에게 파티션 할당
+  5. leader consumer는 최종 할당된 파티션 정보를 group coordinator에게 전달 
+  6. 정보 전달 성공을 공유한 뒤 개별 consumer들은 할당된 파티션에서 메세지를 읽음
+#### consumer group status
+- empty : consumer group에 속한 consumer가 없음
+- PreparingRebalance : consumer group에 속한 consumer가 있으나 아직 파티션이 할당되지 않음
+- CompletingRebalance : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽기 시작함
+- Stable : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽고 있음
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
