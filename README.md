@@ -261,6 +261,8 @@ Lag가 더 길어질 수 있음
 - 유지보수 차원의 consumer restart도 rebalance를 초래하므로 불필요한 rebalance를 발생 시키지 않을 방법 대두
 - consumer group내의 consumer들에게 고정된 id 부여
 - consumer 별로 consumer group 최초 조인 시 할당된 파티션을 그대로 유지하고 consumer가 shutdown 되어도 session.timeout.ms 내에 재 기동되면 rebalance가 수행되지 않고, 기존 파티션이 재 할당됨.
+<img width="1039" height="669" alt="스크린샷 2025-10-17 오후 9 51 34" src="https://github.com/user-attachments/assets/d5220bdc-e5ec-4265-95d6-ad2830a19fbc" />
+
 - 그림에서 consumer #3 이 종료 되더라도 rebalance가 발생하지 않고, partition #3은 다른 consumer에게 재 할당되지 않음
 - consumer #3 session.timeout.ms 내에 다시 기동되면 partition #3는 consumer #3에게 다시 할당됨.
 - consumer #3가 session.timeout.ms 시간 내에 기동되지 않으면 rebalance가 발생하고 partition #3는 consumer 다른 컨슈머에게 재 할당됨.
