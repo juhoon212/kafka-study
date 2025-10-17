@@ -254,7 +254,17 @@
 - empty : consumer group에 속한 consumer가 없음
 - PreparingRebalance : consumer group에 속한 consumer가 있으나 아직 파티션이 할당되지 않음
 - CompletingRebalance : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽기 시작함
-- Stable : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽고 있음
+- Stable : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽고 
+### consumer static group membership
+- 많은 consumer를 가지는 consumer group에서 rebalance가 발생하면 모든 consumer들이 rebalance를 수행하므로 많은 시간이 소모되고 대량 데이터 처리 시
+Lag가 더 길어질 수 있음
+- 유지보수 차원의 consumer restart도 rebalance를 초래하므로 불필요한 rebalance를 발생 시키지 않을 방법 대두
+- consumer group내의 consumer들에게 고정된 id 부여
+- consumer 별로 consumer group 최초 조인 시 할당된 파티션을 그대로 유지하고 consumer가 shutdown 되어도 session.timeout.ms 내에 재 기동되면 rebalance가 수행되지 않고, 기존 파티션이 재 할당됨.
+- 그림에서 consumer #3 이 종료 되더라도 rebalance가 발생하지 않고, partition #3은 다른 consumer에게 재 할당되지 않음
+- consumer #3 session.timeout.ms 내에 다시 기동되면 partition #3는 consumer #3에게 다시 할당됨.
+- consumer #3가 session.timeout.ms 시간 내에 기동되지 않으면 rebalance가 발생하고 partition #3는 consumer 다른 컨슈머에게 재 할당됨.
+
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
