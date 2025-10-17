@@ -22,6 +22,7 @@ public class ConsumerWakeUp {
         props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "lateest"); default
         props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3"); // static group membership
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(topic));
