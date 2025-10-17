@@ -257,7 +257,7 @@
 - Stable : consumer group에 속한 consumer가 파티션 할당을 완료하고 메세지를 읽고 
 ### consumer static group membership
 - 많은 consumer를 가지는 consumer group에서 rebalance가 발생하면 모든 consumer들이 rebalance를 수행하므로 많은 시간이 소모되고 대량 데이터 처리 시
-Lag가 더 길어질 수 있음
+Lag가 더 길어질 수 있음 
 - 유지보수 차원의 consumer restart도 rebalance를 초래하므로 불필요한 rebalance를 발생 시키지 않을 방법 대두
 - consumer group내의 consumer들에게 고정된 id 부여
 - consumer 별로 consumer group 최초 조인 시 할당된 파티션을 그대로 유지하고 consumer가 shutdown 되어도 session.timeout.ms 내에 재 기동되면 rebalance가 수행되지 않고, 기존 파티션이 재 할당됨.
