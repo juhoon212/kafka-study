@@ -15,10 +15,14 @@ public class SimpleConsumer {
         String topic = "simple-topic";
 
         Properties props = new Properties();
-        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.22:9092");
+        props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.25:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_01");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "simple-group");
+        //heartbeat
+        props.setProperty(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, "5000"); // 5초마다 heartbeat 전송
+        props.setProperty(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "90000"); // 90초 동안 heartbeat 응답 없으면 해당 컨슈머 종료 처리
+        props.setProperty(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "600000"); // poll() 메서드 최대 호출 간격 10분
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(topic));
@@ -31,5 +35,7 @@ public class SimpleConsumer {
                 }
             }
         }
+
+
     }
 }
