@@ -267,12 +267,14 @@ Lag가 더 길어질 수 있음
 - 그림에서 consumer #3 이 종료 되더라도 rebalance가 발생하지 않고, partition #3은 다른 consumer에게 재 할당되지 않음
 - consumer #3 session.timeout.ms 내에 다시 기동되면 partition #3는 consumer #3에게 다시 할당됨.
 - consumer #3가 session.timeout.ms 시간 내에 기동되지 않으면 rebalance가 발생하고 partition #3는 consumer 다른 컨슈머에게 재 할당됨.
+
 ### heartbeat와 poll() 관련 주요 consumer 파라미터
 | consumer 파라미터명        | 기본값(ms)    | 설명                                                                                                                               |
 |-----------------------|------------|----------------------------------------------------------------------------------------------------------------------------------|
 | heartbeat.interval.ms | 3000(3초)   | heartbeat 스레드가 heart beat을 보내는 간격, session.timeout.ms 보다 낮게 설정되어야 함. session.timeout.ms의 1/3 보다 낮게 설정 권장                         |
 | session.timeout.ms    | 45000(45초) | 브로커가 consumer로 heart beat을 기다리는 최대 시간, 브로커는 이 시간동안 heart beat을 consumer로 부터 받지 못하면 해당 consumer를 group에서 제외 및 rebalanacing 하도록 지시 |
-| max.poll.interval.ms  | 300000(5분) | 이전 poll() 호출 후 다음 호출 poll() 까지 브로커가 기다리는 시간, 해당 시간동안 호출이 consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있다고 판단하고 브로커는 rebalance 명령을 보냄   |
+| max.poll.interval.ms  | 300000(5분) | 이전 poll() 호출 후 다음 호출 poll() 까지 브로커가 기다리는 시간, 해당 시간동안 호출이 consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있다고 판단하고 브로커는 rebalance 함. |
+
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
