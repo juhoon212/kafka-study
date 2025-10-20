@@ -101,7 +101,7 @@ public class PizzaProducer {
         //props.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "29000"); -> delivery-timeout >= linger.ms(default: 0) + request-timeout.ms(default: 30000)
         //props.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "6");
         //props.setProperty(ProducerConfig.ACKS_CONFIG, "0"); // idempotence 를 위해서는 acks=all 이어야 함
-        props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+        //props.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         // KafkaProducer object creation
         KafkaProducer<String, String> producer = new KafkaProducer<>(props);
