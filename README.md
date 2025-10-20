@@ -266,8 +266,9 @@ Lag가 더 길어질 수 있음
 <img width="1039" height="669" alt="스크린샷 2025-10-17 오후 9 51 34" src="https://github.com/user-attachments/assets/d5220bdc-e5ec-4265-95d6-ad2830a19fbc" />
 - 그림에서 consumer #3 이 종료 되더라도 rebalance가 발생하지 않고, partition #3은 다른 consumer에게 재 할당되지 않음
 - consumer #3 session.timeout.ms 내에 다시 기동되면 partition #3는 consumer #3에게 다시 할당됨.
-- consumer #3가 session.timeout.ms 시간 내에 기동되지 않으면 rebalance가 발생하고 partition #3는 consumer 다른 컨슈머에게 재 할당됨.
+- consumer #3가 session.timeout.ms 시간 내에 기동되지 않으면 rebalance가 발생하고 partition #3는 consumer 다른 컨슈머에게 재 할당됨
 ### heartbeat와 poll() 관련 주요 consumer 파라미터
+
 | consumer 파라미터명        | 기본값(ms)    | 설명                                                                                                                               |
 |-----------------------|------------|----------------------------------------------------------------------------------------------------------------------------------|
 | heartbeat.interval.ms | 3000(3초)   | heartbeat 스레드가 heart beat을 보내는 간격, session.timeout.ms 보다 낮게 설정되어야 함. session.timeout.ms의 1/3 보다 낮게 설정 권장                         |
