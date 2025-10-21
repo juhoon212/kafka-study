@@ -30,7 +30,9 @@ public class CustomPartitioner implements Partitioner {
 
         if (key == null) stickyPartitionCache.partition(topic, cluster);
         if (key instanceof String keyStr) {
+            // key가 specialKeyName과 같으면 0,1번 파티션으로 보낸다.
             if (keyStr.equals(specialKeyName)) partitionIdx = Utils.toPositive(Utils.murmur2(valueBytes)) % numSpecialPartitions; // 0,1
+            // key가 specialKeyName과 다르면 2,3,4번 파티션으로 보낸다.
             else partitionIdx = Utils.toPositive(Utils.murmur2(keyBytes)) % (numPartitions-numSpecialPartitions) + numSpecialPartitions; // 2,3,4
         }
         logger.info("key: {}, is sent to partition: {}", key, partitionIdx);
