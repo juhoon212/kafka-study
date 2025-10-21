@@ -275,7 +275,17 @@ Lag가 더 길어질 수 있음
 | heartbeat.interval.ms | 3000(3초)   | heartbeat 스레드가 heart beat을 보내는 간격, session.timeout.ms 보다 낮게 설정되어야 함. session.timeout.ms의 1/3 보다 낮게 설정 권장                         |
 | session.timeout.ms    | 45000(45초) | 브로커가 consumer로 heart beat을 기다리는 최대 시간, 브로커는 이 시간동안 heart beat을 consumer로 부터 받지 못하면 해당 consumer를 group에서 제외 및 rebalanacing 하도록 지시 |
 | max.poll.interval.ms  | 300000(5분) | 이전 poll() 호출 후 다음 호출 poll() 까지 브로커가 기다리는 시간, 해당 시간동안 호출이 consumer로 부터 이뤄지지 않으면 해당 consumer는 문제가 있다고 판단하고 브로커는 rebalance 함. |
-
+### Consumer rebalancing Protocol
+- 버전에 따라 상이
+#### Eager 모드
+- conumser가 기본으로 설정하는 모드
+- 기존 consumer들의 모든 파티션 할당을 취소하고 잠시 메세지를 읽지 않음. 이후 새롭게 consumer에 파티션을 다시 할당 받고 다시 메세지를 읽음.
+- 할당이 한번에 일어남
+- 모든 consumer가 잠시 메세지를 읽지 않는 시간으로 인해 Lag가 상대적으로 크게 발생할 가능성 존재
+#### Cooperative 모드
+- rebalance 수행 시 기존 consumer들의 모든 파티션 할당을 취소하지 않고 대상이 되는 consumer들에 대해서 파티션에 따라 점진적으로 consumer를 할당하면서 rebalance를 수행
+- 전체 consumer가 메세지 읽기를 중지하지 않으며 개별 consumer가 협력적으로 영향을 받는 파티션만 rebalance로 재분배.
+- 많은 consumer를 가지는 consumer group에서 rebalance 시간이 오래 걸릴 시에 활용도 높음!
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
