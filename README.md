@@ -286,6 +286,14 @@ Lag가 더 길어질 수 있음
 - rebalance 수행 시 기존 consumer들의 모든 파티션 할당을 취소하지 않고 대상이 되는 consumer들에 대해서 파티션에 따라 점진적으로 consumer를 할당하면서 rebalance를 수행
 - 전체 consumer가 메세지 읽기를 중지하지 않으며 개별 consumer가 협력적으로 영향을 받는 파티션만 rebalance로 재분배.
 - 많은 consumer를 가지는 consumer group에서 rebalance 시간이 오래 걸릴 시에 활용도 높음!
+### Consumer 할당 전략
+
+| 파티션 할당 전략                     |내용|
+|-------------------------------|----|
+| Range 할당 전략                   |서로 다른 2개 이상의 토픽을 consumer들이 subscribe 할 경우 토픽별 동일한 파티션을 특정 consumer에게 할당하는 전략<br> 여러 토픽들에서 동일한 키값으로 되어 있는 파티션은 특정 Consumer에 할당하여 <b style="color: pink">해당 consumer가 여러토픽의 동일 키값으로 데이터 처리를 용이하게</b> 할 수 있도록 지원
+| Round Robin 할당 전략             |파티션 별로 consumer들이 <b style="color: skyblue">균등하게 부하를 분배</b>할 수 있도록 여러 토픽들의 파티션들을 consumer들에게 순차적인 round robin 방식으로 할당|                
+| Sticky 할당 전략                  |<br>최초에 할당된 <b style="color: lightgreen">파티션과 consumer 매핑을 rebalance 수행되어도 가급적 그대로 유지</b> 할 수 있도록 지원하는 전략</br> 하지만 위에 써있는 Eager protocol 기반이므로 rebalance시 모든 consumer의 파티션 매핑이 해제된 후 다시 매핑됨.|
+| Cooperative(협력적) Sticky 할당 전략 |최초에 할당된 파티션과 Consumer 매핑을 rebalance 수행되어도 가급적 그대로 유지할 수 있도록 지원 + Cooperative Protocol 기반으로 <b style="color: orange">Rebalanace시 모든 Consumer의 파티션 매핑이 해제되지 않고 rebalance 연관된 파티션과 consumer만 재 매핑됨</br>|
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
