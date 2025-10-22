@@ -294,6 +294,18 @@ Lag가 더 길어질 수 있음
 | Round Robin 할당 전략             |파티션 별로 consumer들이 <b style="color: skyblue">균등하게 부하를 분배</b>할 수 있도록 여러 토픽들의 파티션들을 consumer들에게 순차적인 round robin 방식으로 할당|                
 | Sticky 할당 전략                  |<br>최초에 할당된 <b style="color: lightgreen">파티션과 consumer 매핑을 rebalance 수행되어도 가급적 그대로 유지</b> 할 수 있도록 지원하는 전략</br> 하지만 위에 써있는 Eager protocol 기반이므로 rebalance시 모든 consumer의 파티션 매핑이 해제된 후 다시 매핑됨.|
 | Cooperative(협력적) Sticky 할당 전략 |최초에 할당된 파티션과 Consumer 매핑을 rebalance 수행되어도 가급적 그대로 유지할 수 있도록 지원 + Cooperative Protocol 기반으로 <b style="color: orange">Rebalanace시 모든 Consumer의 파티션 매핑이 해제되지 않고 rebalance 연관된 파티션과 consumer만 재 매핑됨</br>|
+#### Round-Robin 할당 전략 vs Range 할당 전략
+##### 1️⃣ CASE 1
+- <img width="1014" height="751" alt="스크린샷 2025-10-22 오후 9 58 29" src="https://github.com/user-attachments/assets/f3164905-e94f-415a-88ed-0ebde435c519" />
+- <img width="1051" height="814" alt="스크린샷 2025-10-22 오후 10 03 00" src="https://github.com/user-attachments/assets/6ef98c3c-b117-4b04-ab70-0ae92f0b86bb" />
+- 두 그림 모두 동일하지만 case 2로 가면 매핑이 달라진다.
+- RoundRobin 전략은 순차적으로 partition들을 consumer에 할당하기 때문에 Topic A 에서 Partition #1 -> Consumer #1, Partition #2 -> Consumer #2 이런식으로 순차적으로 할당되게 된다.
+- Range 전략은 Topic A의 Partition #1 -> Consumer #1 로 매핑됬다면 Topic B의 Partition #1 도 Consumer #1 로 동일한 번호의 파티션은 동일한 consumer로 매핑된다.
+##### 2️⃣ Case 2
+- <img width="974" height="741" alt="스크린샷 2025-10-22 오후 10 05 03" src="https://github.com/user-attachments/assets/7f545099-cf12-49bc-880c-ca9f927597b4" />
+- Round Robin은 Topic A에서 Partition #1 이 Consumer #1에 할당 -> Partition #2이 순차적으로 Consumer #2에 할당 -> Partition #3 -> 그 다음인 Consumer #1 에 할당 이런식으로 순차적으로 할당됨
+- <img width="1027" height="740" alt="스크린샷 2025-10-22 오후 10 07 14" src="https://github.com/user-attachments/assets/0af247be-262d-4368-96be-6ac73feb9580" />
+- 이번에는 Topic A 의 Partition #1은 Consumer #1에 할당, Topic B의 Partition #1은 Topic A의 Partition #1을 보고 같은 Consumer에 할당 이런식으로 같은 consumer를 계속 가리킴.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
