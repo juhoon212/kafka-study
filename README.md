@@ -307,6 +307,7 @@ Lag가 더 길어질 수 있음
 - Round Robin은 Topic A에서 Partition #1 이 Consumer #1에 할당 -> Partition #2이 순차적으로 Consumer #2에 할당 -> Partition #3 -> 그 다음인 Consumer #1 에 할당 이런식으로 순차적으로 할당됨
 - <img width="1027" height="740" alt="스크린샷 2025-10-22 오후 10 07 14" src="https://github.com/user-attachments/assets/0af247be-262d-4368-96be-6ac73feb9580" />
 - 이번에는 Topic A 의 Partition #1은 Consumer #1에 할당, Topic B의 Partition #1은 Topic A의 Partition #1을 보고 같은 Consumer에 할당 이런식으로 같은 consumer를 계속 가리킴.
+- 다른 Topic의 파티션이지만 같은 키를 가지는 파티션들은 같은 consumer에 매핑되도록 유도
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
