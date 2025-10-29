@@ -18,10 +18,12 @@ public class ConsumerMTopicRebalance {
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.25:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_mtopic");
+//        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_mtopic");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group-assign");
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "lateest"); default
-        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3"); // static group membership
+//        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3"); // static group membership
+        props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName()); // default는 RangeAssignor
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(List.of("topic-p3-t1", "topic-p3-t2"));
