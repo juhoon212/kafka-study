@@ -308,6 +308,8 @@ Lag가 더 길어질 수 있음
 - <img width="1027" height="740" alt="스크린샷 2025-10-22 오후 10 07 14" src="https://github.com/user-attachments/assets/0af247be-262d-4368-96be-6ac73feb9580" />
 - 이번에는 Topic A 의 Partition #1은 Consumer #1에 할당, Topic B의 Partition #1은 Topic A의 Partition #1을 보고 같은 Consumer에 할당 이런식으로 같은 consumer를 계속 가리킴.
 - 다른 Topic의 파티션이지만 같은 키를 가지는 파티션들은 같은 consumer에 매핑되도록 유도
+##### Cooperative Sticky 할당 전략
+- 테스트 결과 rebalance 시에 파티션과 consumer 매핑이 거의 유지됨. 하지만 100% 보장되지는 않음
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.

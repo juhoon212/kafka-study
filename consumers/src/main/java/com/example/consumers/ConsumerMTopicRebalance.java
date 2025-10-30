@@ -23,7 +23,8 @@ public class ConsumerMTopicRebalance {
         //props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "lateest"); default
 //        props.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 //        props.setProperty(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, "3"); // static group membership
-        props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName()); // default는 RangeAssignor
+//        props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, RoundRobinAssignor.class.getName()); // default는 RangeAssignor
+        props.setProperty(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, CooperativeStickyAssignor.class.getName()); // cooperative rebalancing -> 100% sticky 하지는 않다.
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(List.of("topic-p3-t1", "topic-p3-t2"));
