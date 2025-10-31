@@ -310,6 +310,18 @@ Lag가 더 길어질 수 있음
 - 다른 Topic의 파티션이지만 같은 키를 가지는 파티션들은 같은 consumer에 매핑되도록 유도
 ##### Cooperative Sticky 할당 전략
 - 테스트 결과 rebalance 시에 파티션과 consumer 매핑이 거의 유지됨. 하지만 100% 보장되지는 않음
+### 🐻 Consumer Offset Commit
+- Consumer는 subscribe() 를 호출하여 읽어 들이려는 토픽을 등록
+- Consumer는 poll() 메소드를 이용하여 주기적으로 브로커의 토픽 파티션에 메세지를 가져옴
+- 메세지를 성공적으로 가져왔으면 commit을 통해서 __consumer_offsets에 다음에 읽을 offset 위치를 기재함.
+#### Offset Commit 방식
+- __consumer_offsets에는 consumer group이 특정 topic의 파티션별로 읽기 commit한 offset 정보를 가짐. 특정 파티션을 어느 consumer가 commit했는지 정보를 가지지 않음.
+#### 중복 읽기 상황
+- consumer가 poll() 메소드를 통해서 메세지를 가져오고 commit() 메소드를 호출하여 offset을 commit하기 전에 consumer가 비정상 종료될 경우
+- 다시 기동 혹은 rebalancing된 consumer는 commit 되지 않은 offset 위치부터 메세지를 다시 읽어 들이므로 중복 읽기가 발생할 수 있음.
+#### 읽기 누락 상황
+- consumer가 poll() 메소드를 통해서 메세지를 가져오고 commit() 메소드를 호출하여 offset을 commit한 후에 consumer가 비정상 종료될 경우
+- 즉 poll()과 거의 동시에 commit()이 호출된 경우 commit된 offset 위치부터 메세지를 다시 읽어 들이므로 읽기 누락이 발생할 수 있음.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
