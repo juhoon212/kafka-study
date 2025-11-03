@@ -57,6 +57,7 @@ public class PizzaProducer {
         }
     }
 
+
     public static void sendMessage(
             final KafkaProducer<String, String> producer,
             final ProducerRecord<String, String> record,
@@ -83,7 +84,6 @@ public class PizzaProducer {
             }
         }
     }
-
 
     public static void main(String[] args) {
         String topic = "pizza-topic";
