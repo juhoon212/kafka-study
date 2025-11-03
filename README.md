@@ -322,6 +322,10 @@ Lag가 더 길어질 수 있음
 #### 읽기 누락 상황
 - consumer가 poll() 메소드를 통해서 메세지를 가져오고 commit() 메소드를 호출하여 offset을 commit한 후에 consumer가 비정상 종료될 경우
 - 즉 poll()과 거의 동시에 commit()이 호출된 경우 commit된 offset 위치부터 메세지를 다시 읽어 들이므로 읽기 누락이 발생할 수 있음.
+### Consumer의 auto commit
+- Consumer의 파라미터로 auto.enable.commit=true 인 경우 읽어온 메세지를 브로커에 바로 commit 적용하지 않고, auto.commit.interval.ms(기본 5초) 에 정해진 주기마다 consumer가 자동으로 commit 수행
+- Consumer가 읽어온 메세지보다 브로커의 commit이 오래되었으므로 consumer의 장애/재기동 및 rebalance 후 브로커에서 이미 읽어온 메세지를 다시 읽어와서 중복처리 될 수 있음.
+- ex) 첫번째 poll() : 2초 0,1번 record 읽음 -> 두번째 poll() : 4초 2,3번 record 읽음 -> 세번째 poll() : 6초에 이제 3번까지 읽었다는 commit을 브로커에 보냄
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
