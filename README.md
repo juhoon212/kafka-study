@@ -117,6 +117,8 @@
     - producer와 broker 간의 전송이 매우 빠르고 producer에서 메세지를 적절한 record accumulator에 누적된다면 0이 되어도 무방함.
     - 전반적인 producer와 broker 간의 네트워크 속도가 느리거나 producer에서 메세지를 보내는 속도가 느린 경우에는 0보다 크게 설정하는 것이 좋음.
     - 보통 20ms 이하로 설정 권장
+    - <img width="1493" height="713" alt="스크린샷 2025-11-10 오후 11 10 19" src="https://github.com/user-attachments/assets/d46b2e03-cf28-4dc9-9d2f-f9a3c139a765" />
+
 - buffer.memory : record accumulator의 전체 메모리 사이즈
 - batch.size : 배치 하나의 최대 크기
 - max.inflight.requests.per.connection: connection 당 최대 가져갈 수 있는 batch 개수
