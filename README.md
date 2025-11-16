@@ -321,6 +321,7 @@ Lag가 더 길어질 수 있음
 #### 중복 읽기 상황
 - consumer가 poll() 메소드를 통해서 메세지를 가져오고 commit() 메소드를 호출하여 offset을 commit하기 전에 consumer가 비정상 종료될 경우
 - 다시 기동 혹은 rebalancing된 consumer는 commit 되지 않은 offset 위치부터 메세지를 다시 읽어 들이므로 중복 읽기가 발생할 수 있음.
+- ⭐️ consumer는 poll() 할때 record를 기준으로 읽지 않고 batch 단위로 읽어드림.
 #### 읽기 누락 상황
 - consumer가 poll() 메소드를 통해서 메세지를 가져오고 commit() 메소드를 호출하여 offset을 commit한 후에 consumer가 비정상 종료될 경우
 - 즉 poll()과 거의 동시에 commit()이 호출된 경우 commit된 offset 위치부터 메세지를 다시 읽어 들이므로 읽기 누락이 발생할 수 있음.

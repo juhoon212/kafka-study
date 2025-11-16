@@ -19,11 +19,12 @@ public class ConsumerCommit {
         props.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.64.25:9092");
         props.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_03");
+        props.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "group_04");
         // 60초 이후 poll() 메서드가 호출되지 않으면 해당 컨슈머 종료 처리
         // consumer는 rebalance 과정에서 제외되고, 남은 컨슈머들이 파티션을 재할당 받음
         props.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "6000");
         //props.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "")
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(topic));
