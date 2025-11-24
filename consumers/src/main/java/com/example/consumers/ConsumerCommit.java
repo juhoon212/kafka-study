@@ -25,6 +25,7 @@ public class ConsumerCommit {
         props.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "6000");
         //props.setProperty(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "")
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
 
         Consumer<String, String> consumer = new KafkaConsumer<>(props);
         consumer.subscribe(Collections.singleton(topic));
@@ -51,7 +52,32 @@ public class ConsumerCommit {
         // 재실행되는 이유는 kafkaConsumer가 poll()을 다시 호출하기 때문 - 다시 heartbeat 전송 시작
         // 만약 데이터 양이 produce 되는 양이 많다면 partition 수를 늘려서 병목 현상을 완화해야 함
         // while loop 안에서 실행되는 코드의 양이 많거나 오래걸리면 MAX_POLL_INTERVAL_MS_CONFIG 시간을 늘려야 함
-        pollAutoCommit(consumer);
+        //pollAutoCommit(consumer);
+
+        pollCommitSync(consumer);
+    }
+
+    private static void pollCommitSync(final Consumer<String, String> consumer) {
+        try {
+            while (true) {
+                final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));// 1초
+                logger.info("####### consumerRecords count:{}", consumerRecords.count());
+                for (ConsumerRecord<String, String> record : consumerRecords) {
+                    logger.info("record key: {}, record value: {}, partition: {}, offset: {}", record.key(), record.value(), record.partition(), record.offset());
+                }
+                try {
+                    consumer.commitSync();
+                    logger.info("####### commitSync complete #######");
+                }catch (CommitFailedException e) { // 더 이상 retry 할 수 없을 때
+                    logger.error(e.getMessage());
+                }
+            }
+        } catch (WakeupException e) {
+            logger.error("wakeup exception has been called");
+        } finally {
+            consumer.close();
+            logger.info("finally consumer is closing");
+        }
     }
 
     static void pollAutoCommit(Consumer<String, String> consumer) {
