@@ -1,6 +1,7 @@
 package com.example.consumers;
 
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 
 public class ConsumerCommit {
@@ -54,7 +56,40 @@ public class ConsumerCommit {
         // while loop 안에서 실행되는 코드의 양이 많거나 오래걸리면 MAX_POLL_INTERVAL_MS_CONFIG 시간을 늘려야 함
         //pollAutoCommit(consumer);
 
-        pollCommitSync(consumer);
+        //pollCommitSync(consumer);
+        pollCommitAsync(consumer);
+    }
+
+    private static void pollCommitAsync(final Consumer<String, String> consumer) {
+        try {
+            while (true) {
+                final ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(1000));// 1초
+                logger.info("####### consumerRecords count:{}", consumerRecords.count());
+                for (ConsumerRecord<String, String> record : consumerRecords) {
+                    logger.info("record key: {}, record value: {}, partition: {}, offset: {}", record.key(), record.value(), record.partition(), record.offset());
+                }
+
+                consumer.commitAsync(new OffsetCommitCallback() { // 비동기 커밋일때 오류 처리
+                    @Override
+                    public void onComplete(Map<TopicPartition, OffsetAndMetadata> map, Exception e) {
+                        if (e != null) {
+                            logger.error("offsets: {} is not completed error", map, e);
+                        }
+                    }
+                });
+
+            }
+        } catch (WakeupException e) {
+            logger.error("wakeup exception has been called");
+        } finally {
+            try (consumer) {
+                consumer.commitSync(); // commitAsync는 실패할 수 있고 실패하면 offset이 유실될 수 있기 때문에 종료 시점에 commitSync로 한번 더 커밋
+            } catch (CommitFailedException e) {
+                logger.error(e.getMessage());
+            } finally {
+                logger.info("finally consumer is closing");
+            }
+        }
     }
 
     private static void pollCommitSync(final Consumer<String, String> consumer) {
