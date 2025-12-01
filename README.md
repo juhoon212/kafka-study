@@ -335,6 +335,15 @@ Lag가 더 길어질 수 있음
 ### Consumer 에서 Topic의 특정 파티션만 할당하기
 - Consumer 에게 여러개의 파티션이 있는 Topic 에서 특정 파티션만 할당 가능. 배치 처리 시 특정 key 레벨의 파티션을 특정 Consumer에게 할당하여 처리할 경우 적용
 - KafkaConsumer의 assign() 메소드에 TopicPartition 객체로 특정 파티션을 인자로 입력하여 할당
+### Consumer에서 특정 offset 위치부터 메세지 읽기
+- Consumer에게 특정 offset 위치부터 메세지를 읽도록 지시 가능
+- seek() 메소드에 TopicPartition 객체와 offset 위치를 인자로 입력하여 지시
+- seek() 메소드 호출 시 주의점!
+  - poll() 메소드 호출 전에 seek() 메소드를 호출해야함.
+  - commit() 을 하지말고 읽어야함
+  - 기존 group_id로 consumer를 기동할 경우 commit된 offset 위치부터 메세지를 읽어오기 때문에 seek() 메소드로 지정한 offset 위치부터 읽어오지 않음.
+  - 따라서 group_id를 변경하거나 consumer group을 삭제하고 재 생성한 후에 seek() 메소드를 호출해야함.
+- seek() 의 목적은 원래 일하던 consumer group은 rebalancing 하게 냅두고 해당 컨슈머에서 다른 group_id를 할당하여 디버깅 목적 용도로 많이 사용된다.
 ## 📘 Kafka Config
 ### Broker와 Topic 레벨 Config
 - Broker에서 설정할 수 있는 config는 상당히 많다. Broker 레벨에서의 config는 재기동을 해야 반영되는 static config이고 topic config는 동적으로 사용이 가능하다.
