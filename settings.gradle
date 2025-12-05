@@ -1,1 +1,3 @@
 rootProject.name = 'kafka-proj-01'
+
+include 'practice'
