@@ -35,7 +35,7 @@ public class FileProducer {
     }
 
     private static void sendFileMessages(final KafkaProducer<String, String> producer, final String topic, final String filePath) {
-        String line = "";
+        String line;
         final String delimiter = ",";
         try {
             FileReader fileReader = new FileReader(filePath);
