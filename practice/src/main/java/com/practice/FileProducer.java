@@ -1,8 +1,6 @@
 package com.practice;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +58,19 @@ public class FileProducer {
     }
 
     private static void sendMessage(
-            final KafkaProducer<String, String> producer, final String topic, final String key, final String s) {
+            final KafkaProducer<String, String> producer,
+            final String topic,
+            final String key,
+            final String value
+    ) {
+        ProducerRecord<String, String> record = new ProducerRecord<>(topic, String.valueOf(key), value);
+        logger.info("key: {}, value: {}", key, value);
+
+        producer.send(record, (metadata, exception) -> {
+            if (exception == null) {
+                logger.info("####### record metadata received #### \n partition: {}\noffset: {}\ntimestamp: {}",
+                        metadata.partition(), metadata.offset(), metadata.timestamp());
+            } else logger.error("exception error from broker - {}", exception.getMessage());
+        });
     }
 }
