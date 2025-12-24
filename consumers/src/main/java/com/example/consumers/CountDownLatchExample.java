@@ -10,21 +10,18 @@ public class CountDownLatchExample {
         CountDownLatch doneLatch = new CountDownLatch(3);
 
         for (int i=0; i<3; ++i) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        System.out.println("[" + Thread.currentThread().getName() + "]" + " is sleep");
-                        Thread.sleep(1000);
-                        readyLatch.countDown(); // 모든 worker thread가 준비할때까지 대기
-                        System.out.println("[" + Thread.currentThread().getName() + "]" + " is ready and waiting for mainLatch");
-                        mainLatch.await();
-                        System.out.println("[" + Thread.currentThread().getName() + "]" + " is wake up");
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    } finally {
-                        doneLatch.countDown();
-                    }
+            Thread thread = new Thread(() -> {
+                try {
+                    System.out.println("[" + Thread.currentThread().getName() + "]" + " is sleep");
+                    Thread.sleep(1000);
+                    readyLatch.countDown(); // 모든 worker thread가 준비할때까지 대기
+                    System.out.println("[" + Thread.currentThread().getName() + "]" + " is ready and waiting for mainLatch");
+                    mainLatch.await();
+                    System.out.println("[" + Thread.currentThread().getName() + "]" + " is wake up");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    doneLatch.countDown();
                 }
             });
             thread.start();
