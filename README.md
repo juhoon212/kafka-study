@@ -356,3 +356,25 @@ Lag가 더 길어질 수 있음
 ### kafka-dump-log
 - 명령어 : ```kafka-dump-log --deep-iteration --files [log 파일 위치] --print-data-log```
 - 여기서 log 파일 위치는 카프카 설정에서 생성한 로그 파일 위치의 찾고 싶은 토픽 name 경로로 들어가면 ~.log 로 찾을 수 있다.
+
+## Internal IP + External IP 바인딩 설정
+- 카프카 브로커가 내부망에 위치하고 외부망에서 접근하는 경우(도커 컨테이너 환경)
+- External IP로 접근하게 하려면 해당 컨테이너의 host 네트워크 IP를 EXTERNAL_ADVERTISED_LISTENERS에 설정
+- 내부망 + local host 에서 접근하는 경우 INTERNAL_ADVERTISED_LISTENERS에 내부망 IP를 설정
+- 이 때 만약 망연계 장비가 외부망과 내부망 사이에 존재할 경우 EXTERNAL_ADVERTISED_LISTENERS에 망연계 장비의 IP를 설정
+- kafka container 의 host에 있는 spring service 에서 접근할 시에는 망연계 장비의 ip가 아니라 host의 ip를 명시해줘야함.
+- 이떄 host는 9092가 아니라 다른 포트 즉 19092 같은 포트를 매핑해줘야함.
+  - ex) 
+  - ``` 
+    ---docker-compose.yml---
+    ports:
+    - "19092:19092"
+    - "9092:9092"
+    ```
+- 예시
+  - 망연계 장비 ip : 192.168.30.89
+  - 내부망의 kafka container host ip : 192.168.10.89
+  - 이때 kafka를 docker에서 운영한다면 docker-compose.yml 에서 ADVERTISED_LISTENERS를 다음과 같이 설정
+  ```
+  docker-compose.yaml
+    KAFKA_ADVERTISED_LISTENERS: INTERNAL://192.168.10.89:19092,EXTERNAL://192.168.30.89:9092
