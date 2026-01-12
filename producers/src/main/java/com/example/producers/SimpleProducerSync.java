@@ -30,8 +30,8 @@ public class SimpleProducerSync {
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, "id-001", "hello-world");
 
         // KafkaProducer send data to Kafka topic
-        Future<RecordMetadata> future = producer.send(record);
         try {
+            Future<RecordMetadata> future = producer.send(record);
             // sync code - .get() blocks the .send() method until a response is received
             final RecordMetadata recordMetadata = future.get();
             logger.info("\n ##### record metadata received #### \n partition: {}\noffset: {}\ntimestamp: {}", recordMetadata.partition(), recordMetadata.offset(), recordMetadata.timestamp());
