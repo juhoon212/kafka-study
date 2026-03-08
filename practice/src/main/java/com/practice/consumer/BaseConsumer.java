@@ -80,10 +80,9 @@ public class BaseConsumer<K extends Serializable, V extends Serializable> {
             if(exception != null) {
                 logger.error("offsets {} is not completed, error:{}", offsets, exception.getMessage());
             }
-
         });
-
     }
+
     private void pollCommitSync(long durationMillis) throws WakeupException, Exception {
         ConsumerRecords<K, V> consumerRecords = this.kafkaConsumer.poll(Duration.ofMillis(durationMillis));
         processRecords(consumerRecords);

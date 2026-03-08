@@ -81,7 +81,6 @@ public class ConsumerPartitionAssignSeek {
                         }
                     }
                 });
-
             }
         } catch (WakeupException e) {
             logger.error("wakeup exception has been called");
